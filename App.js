@@ -1,20 +1,60 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import * as React from "react";
+import { Animated } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+import Homescreen from "./components/Homescreen";
+import Itemscreen from "./components/Itemscreen";
+import Productsscren from "./components/Productsscreen";
+import { CustoomDatascreen } from "./components/CustomDatascreen";
+import Axiosscreen from "./components/Axiosscreen";
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+const forFade = ({ current, next }) => {
+    const opacity = Animated.add(
+        current.progress,
+        next ? next.progress : 0
+    ).interpolate({
+        inputRange: [0, 1, 2],
+        outputRange: [0, 1, 0],
+    });
+
+    return {
+        leftButtonStyle: { opacity },
+        rightButtonStyle: { opacity },
+        titleStyle: { opacity },
+        backgroundStyle: { opacity },
+    };
+};
+const client = new ApolloClient({
+    uri: "https://demo.saleor.io/graphql/",
+    cache: new InMemoryCache(),
+});
+
+const Stack = createStackNavigator();
+
+function MyStack() {
+    return (
+        <ApolloProvider client={client}>
+            <Stack.Navigator>
+                <Stack.Screen
+                    name="Home"
+                    component={Homescreen}
+                    screenOptions={{
+                        headerTintColor: "white",
+                        headerStyle: { backgroundColor: "tomato" },
+                    }}
+                />
+                <Stack.Screen name="Detail" component={Itemscreen} />
+                <Stack.Screen name="Products" component={Productsscren} />
+            </Stack.Navigator>
+        </ApolloProvider>
+    );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default function App() {
+    return (
+        <NavigationContainer>
+            <MyStack />
+        </NavigationContainer>
+    );
+}
