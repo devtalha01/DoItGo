@@ -1,10 +1,17 @@
 // Aboutscreen.js
-import React, { Component } from "react";
+import React, { Component, useContext, useState } from "react";
 import { Button, View, Text, Image, StyleSheet } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { AppContext } from "../store/context";
 
 function Itemscreen({ route, navigation }) {
     // Get the dynamic item from the params.
     const { item } = route.params;
+    let { cart, setCart } = useContext(AppContext);
+    let alreadyInCart = cart?.find((product) => product.id == item.node.id);
+    let [quantity, setQuantity] = useState(
+        alreadyInCart ? alreadyInCart.quantity : 1
+    );
     return (
         <View
             style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
@@ -18,6 +25,49 @@ function Itemscreen({ route, navigation }) {
             <Text style={styles.text}>{item.node.name}</Text>
             <Text style={styles.text}>$5</Text>
             <Text style={styles.text}>{item.node.description}</Text>
+            <View style={styles.text}>
+                <Text> Quantity</Text>
+                <View style={styles.quantity}>
+                    <TouchableOpacity
+                        onPress={() =>
+                            quantity > 1 ? setQuantity(quantity - 1) : null
+                        }
+                    >
+                        <Text>-</Text>
+                        <Text style={styles.text}>{quantity}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => {
+                            setQuantity(quantity + 1);
+                        }}
+                    >
+                        <Text style={styles.quantity}>+</Text>
+                    </TouchableOpacity>
+
+                    <Button
+                        onPress={() => {
+                            alreadyInCart
+                                ? setCart(
+                                      cart.map((pd) =>
+                                          pd.id === item.node.id
+                                              ? { ...pd, quantity: quantity }
+                                              : pd
+                                      )
+                                  )
+                                : setCart([
+                                      ...cart,
+                                      {
+                                          id: item.node.id,
+                                          name: item.node.name,
+                                          quantity: quantity,
+                                      },
+                                  ]);
+                            navigation.navigate("Cart");
+                        }}
+                        title={alreadyInCart ? "Update cart" : "Add to cart"}
+                    />
+                </View>
+            </View>
             <Button title="Go back" onPress={() => navigation.goBack()} />
         </View>
     );
@@ -26,11 +76,9 @@ function Itemscreen({ route, navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        //alignItems:'center',
         justifyContent: "center",
     },
     imageContainer: {
-        //textAlign:'center',
         width: "100%",
         display: "flex",
         justifyContent: "center",
@@ -45,6 +93,13 @@ const styles = StyleSheet.create({
         width: 200,
         height: 200,
         borderRadius: 10,
+    },
+    quantityContainer: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: 10,
     },
 });
 
