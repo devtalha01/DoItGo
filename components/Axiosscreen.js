@@ -14,7 +14,7 @@ const PRODUCTS_QUERY = `
 `;
 
 function Axiosscreen() {
-    const { data, isLoading, error } = useQuery("launches", () => {
+    const { data, isLoading, error } = useQuery("missions", () => {
         return axios({
             url: endpoint,
             method: "POST",
@@ -23,7 +23,6 @@ function Axiosscreen() {
             },
         }).then((response) => response.data.data);
     });
-    // console.log("Hanane" + data);
     return (
         <FlatList
             data={data.missions}

@@ -2,13 +2,18 @@ import * as React from "react";
 import { Animated } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 import Homescreen from "./components/Homescreen";
 import Itemscreen from "./components/Itemscreen";
 import Productsscren from "./components/Productsscreen";
 import { CustoomDatascreen } from "./components/CustomDatascreen";
 import Axiosscreen from "./components/Axiosscreen";
-
+import Cartscreen from "./components/Cartscreen";
+import { AppContextProvider } from "./store/context";
+import { QueryClient, QueryClientProvider } from "react-query";
+import Loginscreen from "./components/Login/Loginscreen";
+import Registerscreen from "./components/Login/Registerscreen";
+import { AuthContext, AuthProvider } from "./components/Login/context";
+import UserInfoscreen from "./components/Login/UserInfoscreen";
 const forFade = ({ current, next }) => {
     const opacity = Animated.add(
         current.progress,
@@ -25,29 +30,48 @@ const forFade = ({ current, next }) => {
         backgroundStyle: { opacity },
     };
 };
-const client = new ApolloClient({
-    uri: "https://demo.saleor.io/graphql/",
-    cache: new InMemoryCache(),
-});
 
 const Stack = createStackNavigator();
+const queryClient = new QueryClient();
 
 function MyStack() {
+    const Navigation = () => {
+        const { userInfo } = useContext(AuthContext);
+    };
     return (
-        <ApolloProvider client={client}>
-            <Stack.Navigator>
-                <Stack.Screen
-                    name="Home"
-                    component={Homescreen}
-                    screenOptions={{
-                        headerTintColor: "white",
-                        headerStyle: { backgroundColor: "tomato" },
-                    }}
-                />
-                <Stack.Screen name="Detail" component={Itemscreen} />
-                <Stack.Screen name="Products" component={Productsscren} />
-            </Stack.Navigator>
-        </ApolloProvider>
+        <QueryClientProvider client={queryClient}>
+            <AppContextProvider>
+                <AuthProvider>
+                    <Stack.Navigator initialRouteName="Login">
+                        <Stack.Screen
+                            name="Home"
+                            component={Homescreen}
+                            options={{ headerShown: false }}
+                            screenOptions={{
+                                headerTintColor: "white",
+                                headerStyle: { backgroundColor: "tomato" },
+                            }}
+                        />
+                        <Stack.Screen name="Detail" component={Itemscreen} />
+                        <Stack.Screen
+                            name="Products"
+                            component={Productsscren}
+                        />
+                        <Stack.Screen name="Cart" component={Cartscreen} />
+                        <Stack.Screen name="Login" component={Loginscreen} />
+                        <Stack.Screen
+                            name="Register"
+                            component={Registerscreen}
+                        />
+                        <Stack.Screen
+                            name="UserInfo"
+                            initialParams={{ otherParam: "App" }}
+                            component={UserInfoscreen}
+                        />
+                    </Stack.Navigator>
+                </AuthProvider>
+            </AppContextProvider>
+        </QueryClientProvider>
     );
 }
 
