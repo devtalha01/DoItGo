@@ -8,6 +8,7 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(false);
     const [userInfo, setUserInfo] = useState("");
     const [userInfos, setUserInfos] = useState([]);
+    const [message, setMessage] = useState("");
     const login = (email, password) => {
         setLoading(true);
         //email = "atuny0@sohu.com";
@@ -19,7 +20,12 @@ export const AuthProvider = ({ children }) => {
             })
             .then((res) => {
                 let userInfo = res.data.users;
-                setUserInfo(userInfo.find((data) => data.email === email));
+                setUserInfo(
+                    userInfo.find(
+                        (data) =>
+                            data.email === email && data.password == password
+                    ) ?? []
+                );
                 setLoading(false);
             })
             .catch((e) => {
@@ -28,7 +34,7 @@ export const AuthProvider = ({ children }) => {
             });
     };
     const logout = () => {
-        setUserInfo(null);
+        setUserInfo([0]);
     };
     const exampleUsers = () => {
         setLoading(true);

@@ -9,8 +9,10 @@ import {
     Image,
     Button,
     SafeAreaView,
+    ActivityIndicator,
 } from "react-native";
 import { useQuery, gql } from "@apollo/client";
+import UserInfoscreen from "../components/Login/UserInfoscreen";
 
 const GET_PRODUCTS = gql`
     query getProducts {
@@ -36,8 +38,12 @@ const handleEmpty = () => {
 const Item = ({ item, title, onPress, navigation }) => (
     <View
         style={{
-            justifyContent: "space-between",
-            padding: 10,
+            flex: 1,
+            justifyContent: "flex-end",
+            borderRadius: 10,
+            paddingLeft: 5,
+            paddingRight: 5,
+            paddingBottom: 2,
         }}
     >
         <TouchableOpacity
@@ -46,13 +52,13 @@ const Item = ({ item, title, onPress, navigation }) => (
         >
             <Image
                 source={{ uri: item.node.thumbnail.url }}
-                style={{ height: 100, width: 100 }}
+                style={{ height: 100, width: 130 }}
             />
             <Text
                 style={{
                     fontSize: 12,
                     fontWeight: "bold",
-                    width: "60%",
+                    alignSelf: "flex-start",
                 }}
             >
                 {item.node.name}
@@ -69,7 +75,6 @@ const Productsscren = ({ navigation }) => {
     let [quantity, setQuantity] = useState(1);
     let alreadyInCart = false;
     const [selectedId, setSelectedId] = useState(null);
-
     const renderItem = ({ item }) => {
         return (
             <Item
@@ -100,8 +105,13 @@ const Productsscren = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
+            <UserInfoscreen navigation={navigation} />
             {loading ? (
-                <Text>Loading</Text>
+                <ActivityIndicator
+                    style={{ height: 80 }}
+                    color="grey"
+                    size="large"
+                />
             ) : (
                 <SafeAreaView>
                     <Button
@@ -115,6 +125,7 @@ const Productsscren = ({ navigation }) => {
                             <Text style={styles.title}>Products</Text>
                         )}
                         renderItem={renderItem}
+                        showsHorizontalScrollIndicator={false}
                         numColumns={2}
                         keyExtractor={(item) => item.node.id} // Extract keys for each item in the array
                     />
@@ -148,10 +159,18 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     item: {
-        padding: 20,
         marginVertical: 8,
         marginHorizontal: 16,
         backgroundColor: "yellow",
+    },
+    button: {
+        alignItems: "center",
+        justifyContent: "center",
+        paddingVertical: 12,
+        paddingHorizontal: 32,
+        borderRadius: 4,
+        elevation: 3,
+        backgroundColor: "black",
     },
 });
 export default Productsscren;

@@ -1,57 +1,83 @@
 import react, { useContext, useState } from "react";
-import {
-    Button,
-    View,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-} from "react-native";
+import { View, StyleSheet, Text, SafeAreaView, FlatList } from "react-native";
 import { AuthContext, AuthProvider } from "./context";
+const emptyList = () => {
+    return (
+        <View stye={{ alignItem: "center" }}>
+            <Text style={styles.item}>No data found!</Text>
+        </View>
+    );
+};
+
+const itemSeparator = () => {
+    return (
+        <View
+            style={{ height: 1, backgroundColor: "grey", marginHorizontal: 10 }}
+        />
+    );
+};
 
 function Registerscreen({ navigation }) {
-    const [email, setEmail] = useState(null);
-    const [password, setPassword] = useState(null);
     const { login, userInfo, loading, logout, userInfos, exampleUsers } =
         useContext(AuthContext);
+    const [copiedText, setCopiedText] = useState("");
+
     return (
-        <View style={styles.container}>
-            {userInfos.length > 0 ? (
-                userInfos.map((item) => {
+        <SafeAreaView style={styles.container}>
+            <FlatList
+                data={userInfos}
+                renderItem={({ item }) => {
                     return (
-                        <View key={item.id}>
-                            <Text style={styles.text}>
-                                {item.id} + {item.firstName}+ {item.lastName} +
-                                {item.email} + {item.password}
-                            </Text>
+                        <View>
+                            <Text> Email : {item.email} </Text>
+                            <Text> Password : {item.password} </Text>
                         </View>
                     );
-                })
-            ) : (
-                <Text style={styles.text}>No user found!</Text>
-            )}
-        </View>
+                }}
+                keyExtractor={(item) => item.id}
+                ItemSeparatorComponent={itemSeparator}
+                ListEmptyComponent={emptyList}
+                ListHeaderComponent={() => (
+                    <Text
+                        style={{
+                            fontSize: 30,
+                            textAlign: "center",
+                            marginTop: 20,
+                            fontWeight: "bold",
+                            textDecorationLine: "underline",
+                        }}
+                    >
+                        List of accounts
+                    </Text>
+                )}
+                ListFooterComponent={() => (
+                    <Text
+                        style={{
+                            fontSize: 30,
+                            textAlign: "center",
+                            marginBottom: 20,
+                            fontWeight: "bold",
+                        }}
+                    >
+                        Thank You ;)
+                    </Text>
+                )}
+            />
+        </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
+        marginTop: 5,
+        fontSize: 30,
     },
-    wrapper: {
-        width: "80%",
-    },
-    input: {
-        marginBottom: 12,
-        borderWidth: 1,
-        borderColor: "#bbb",
-        borderRadius: 5,
-        paddingHorizontal: 14,
-    },
-    link: {
-        color: "blue",
+    item: {
+        padding: 20,
+        marginTop: 5,
+        fontSize: 15,
     },
 });
+
 export default Registerscreen;

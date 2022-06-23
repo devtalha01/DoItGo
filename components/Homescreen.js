@@ -26,11 +26,6 @@ function Homescreen({ navigation }) {
                 onPress={() => navigation.navigate("Login")}
             />
 
-            <Button
-                title="Show products"
-                onPress={() => navigation.navigate("Products")}
-            />
-
             {/*<QueryClientProvider client={queryClient}>
                 <Axiosscreen />
             </QueryClientProvider> */}

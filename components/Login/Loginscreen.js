@@ -1,4 +1,4 @@
-import react, { useContext, useState } from "react";
+import react, { useContext, useState, useRef } from "react";
 import {
     Button,
     View,
@@ -7,10 +7,21 @@ import {
     TextInput,
     TouchableOpacity,
     ActivityIndicator,
+    Animated,
 } from "react-native";
 import { AuthContext, AuthProvider } from "./context";
+import UserInfoscreen from "./UserInfoscreen";
 
 const Loginscreen = ({ navigation }) => {
+    const fadeAnim = useRef(new Animated.Value(0)).current;
+    const fadeIn = () => {
+        Animated.timing(fadeAnim, {
+            toValue: 1,
+            duration: 2000,
+            useNativeDriver: true,
+        }).start();
+    };
+
     const [email, setEmail] = useState(null);
     const [password, setPassword] = useState(null);
     const { login, userInfo, loading, logout, userInfos, exampleUsers } =
@@ -19,7 +30,7 @@ const Loginscreen = ({ navigation }) => {
         typeof !userInfo?.firstName !== "undefined" && !userInfo?.firstName
             ? true
             : false;
-    const [show, setShow] = useState(hideLogin);
+
     return (
         <View style={styles.container}>
             {loading && (
@@ -29,23 +40,21 @@ const Loginscreen = ({ navigation }) => {
                     size="large"
                 />
             )}
-
-            {!show && (
-                <View>
-                    <Text style={styles.welcome}>
-                        Welcome {userInfo?.firstName}{" "}
+            {userInfo.length === 0 && (
+                <Animated.View
+                    style={{
+                        opacity: fadeAnim,
+                    }}
+                >
+                    <Text style={styles.error}>
+                        Please click on the link given below to recover a valid
+                        account!
                     </Text>
-                    <Button
-                        title="Logout"
-                        onPress={() => {
-                            logout();
-                            setShow(true);
-                        }}
-                        color="red"
-                    />
-                </View>
+                </Animated.View>
             )}
-            {show && (
+
+            <UserInfoscreen navigation={navigation} />
+            {hideLogin && (
                 <View style={styles.wrapper}>
                     <TextInput
                         style={styles.input}
@@ -64,12 +73,12 @@ const Loginscreen = ({ navigation }) => {
                         title="Login"
                         onPress={() => {
                             login(email, password);
-                            navigation.navigate("Home");
+                            fadeIn();
                         }}
                     />
 
                     <View style={{ flexDirection: "row", marginTop: 20 }}>
-                        <Text> Don't have an account ?</Text>
+                        <Text>Don't have an account ? </Text>
                         <TouchableOpacity
                             onPress={() => {
                                 exampleUsers();
@@ -77,7 +86,7 @@ const Loginscreen = ({ navigation }) => {
                             }}
                         >
                             <Text style={styles.link}>
-                                Try with an account!
+                                Use one of these accounts!
                             </Text>
                         </TouchableOpacity>
                     </View>
@@ -107,6 +116,14 @@ const styles = StyleSheet.create({
         color: "blue",
     },
     welcome: { fontSize: 18, marginBottom: 8 },
+    error: {
+        backgroundColor: "#cc0011",
+        height: 40,
+        borderRadius: 10,
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: 5,
+    },
 });
 
 export default Loginscreen;

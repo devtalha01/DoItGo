@@ -24,16 +24,15 @@ function Itemscreen({ route, navigation }) {
 
             <Text style={styles.text}>{item.node.name}</Text>
             <Text style={styles.text}>$5</Text>
-            <Text style={styles.text}>{item.node.description}</Text>
-            <View style={styles.text}>
-                <Text> Quantity</Text>
+            <View style={styles.quantityContainer}>
+                <Text style={styles.text}> Quantity</Text>
                 <View style={styles.quantity}>
                     <TouchableOpacity
                         onPress={() =>
                             quantity > 1 ? setQuantity(quantity - 1) : null
                         }
                     >
-                        <Text>-</Text>
+                        <Text style={styles.text}>-</Text>
                         <Text style={styles.text}>{quantity}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
@@ -41,33 +40,38 @@ function Itemscreen({ route, navigation }) {
                             setQuantity(quantity + 1);
                         }}
                     >
-                        <Text style={styles.quantity}>+</Text>
+                        <Text style={styles.text}>+</Text>
                     </TouchableOpacity>
-
-                    <Button
-                        onPress={() => {
-                            alreadyInCart
-                                ? setCart(
-                                      cart.map((pd) =>
-                                          pd.id === item.node.id
-                                              ? { ...pd, quantity: quantity }
-                                              : pd
-                                      )
-                                  )
-                                : setCart([
-                                      ...cart,
-                                      {
-                                          id: item.node.id,
-                                          name: item.node.name,
-                                          quantity: quantity,
-                                      },
-                                  ]);
-                            navigation.navigate("Cart");
-                        }}
-                        title={alreadyInCart ? "Update cart" : "Add to cart"}
-                    />
                 </View>
             </View>
+            <View style={styles.buttonContainer}>
+                <Button
+                    onPress={() => {
+                        alreadyInCart
+                            ? setCart(
+                                  cart.map((pd) =>
+                                      pd.id === item.node.id
+                                          ? {
+                                                ...pd,
+                                                quantity: quantity,
+                                            }
+                                          : pd
+                                  )
+                              )
+                            : setCart([
+                                  ...cart,
+                                  {
+                                      id: item.node.id,
+                                      name: item.node.name,
+                                      quantity: quantity,
+                                  },
+                              ]);
+                        navigation.navigate("Cart");
+                    }}
+                    title={alreadyInCart ? "Update cart" : "Add to cart"}
+                />
+            </View>
+
             <Button title="Go back" onPress={() => navigation.goBack()} />
         </View>
     );
@@ -100,6 +104,16 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         padding: 10,
+    },
+    buttonContainer: {
+        width: "100%",
+        padding: 10,
+    },
+    quantity: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
     },
 });
 

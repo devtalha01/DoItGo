@@ -1,12 +1,13 @@
 import React, { createContext, useState, useEffect } from "react";
 import { useQuery } from "react-query";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { URL_PRODUCTS } from "../store/constants ";
 const queryClient = new QueryClient();
 
 const AppContext = createContext();
 const GET_PRODUCTS = `
       {
-        products(first: 20, channel: "default-channel") {
+        products(first: 40, channel: "default-channel") {
             edges {
                 node {
                     id
@@ -26,7 +27,8 @@ const AppContextProvider = ({ children }) => {
     const [loading, setLoading] = useState(false);
     //Loading products/cart with products items
     const { data, isLoading, error } = useQuery("products", () => {
-        return fetch("https://demo.saleor.io/graphql/", {
+        setLoading(true);
+        return fetch(URL_PRODUCTS, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ query: GET_PRODUCTS }),
@@ -39,6 +41,7 @@ const AppContextProvider = ({ children }) => {
                 }
             })
             .then((response) => {
+                setLoading(false);
                 setProducts(response.data);
             })
             .catch((err) => console.log(err));

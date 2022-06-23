@@ -13,6 +13,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import Loginscreen from "./components/Login/Loginscreen";
 import Registerscreen from "./components/Login/Registerscreen";
 import { AuthContext, AuthProvider } from "./components/Login/context";
+import UserInfoscreen from "./components/Login/UserInfoscreen";
 const forFade = ({ current, next }) => {
     const opacity = Animated.add(
         current.progress,
@@ -41,7 +42,7 @@ function MyStack() {
         <QueryClientProvider client={queryClient}>
             <AppContextProvider>
                 <AuthProvider>
-                    <Stack.Navigator>
+                    <Stack.Navigator initialRouteName="Login">
                         <Stack.Screen
                             name="Home"
                             component={Homescreen}
@@ -61,6 +62,11 @@ function MyStack() {
                         <Stack.Screen
                             name="Register"
                             component={Registerscreen}
+                        />
+                        <Stack.Screen
+                            name="UserInfo"
+                            initialParams={{ otherParam: "App" }}
+                            component={UserInfoscreen}
                         />
                     </Stack.Navigator>
                 </AuthProvider>
