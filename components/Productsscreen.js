@@ -10,29 +10,26 @@ import {
     Button,
     SafeAreaView,
     ActivityIndicator,
+    ImageBackground,
 } from "react-native";
 import { useQuery, gql } from "@apollo/client";
 import UserInfoscreen from "../components/Login/UserInfoscreen";
-
-const GET_PRODUCTS = gql`
-    query getProducts {
-        products(first: 20, channel: "default-channel") {
-            edges {
-                node {
-                    id
-                    name
-                    description
-                    thumbnail {
-                        url
-                    }
-                }
-            }
-        }
-    }
-`;
+import { AuthContext, AuthProvider } from "../components/Login/context";
+import ShowNotification from "./../hooks/ShowNotification";
 
 const handleEmpty = () => {
     return <Text>No data present!</Text>;
+};
+const Divider = () => {
+    return (
+        <View
+            style={{
+                height: 1,
+                width: "100%",
+                backgroundColor: "blue",
+            }}
+        />
+    );
 };
 
 const Item = ({ item, title, onPress, navigation }) => (
@@ -43,7 +40,8 @@ const Item = ({ item, title, onPress, navigation }) => (
             borderRadius: 10,
             paddingLeft: 5,
             paddingRight: 5,
-            paddingBottom: 2,
+            marginHorizontal: 5,
+            marginBottom: 10,
         }}
     >
         <TouchableOpacity
@@ -65,15 +63,17 @@ const Item = ({ item, title, onPress, navigation }) => (
             </Text>
         </TouchableOpacity>
         <Text>$10</Text>
-        <Button title={title} onPress={onPress}></Button>
+        <Button title={title} onPress={onPress} color="black"></Button>
     </View>
 );
 
 const Productsscren = ({ navigation }) => {
     const { products, loading, cart, setCart } = useContext(AppContext);
+    const styleShared = require("./../style");
+    const { userInfo } = useContext(AuthContext);
+    const [ref, setRef] = useState(null);
     const goTo = () => navigation.navigate("Detail");
     let [quantity, setQuantity] = useState(1);
-    let alreadyInCart = false;
     const [selectedId, setSelectedId] = useState(null);
     const renderItem = ({ item }) => {
         return (
@@ -105,32 +105,66 @@ const Productsscren = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <UserInfoscreen navigation={navigation} />
-            {loading ? (
-                <ActivityIndicator
-                    style={{ height: 80 }}
-                    color="grey"
-                    size="large"
-                />
-            ) : (
-                <SafeAreaView>
-                    <Button
-                        title="See my cart"
-                        onPress={() => navigation.navigate("Cart")}
-                    ></Button>
-                    <FlatList
-                        data={products.products.edges}
-                        ListEmptyComponent={handleEmpty}
-                        ListHeaderComponent={() => (
-                            <Text style={styles.title}>Products</Text>
-                        )}
-                        renderItem={renderItem}
-                        showsHorizontalScrollIndicator={false}
-                        numColumns={2}
-                        keyExtractor={(item) => item.node.id} // Extract keys for each item in the array
+            <ImageBackground
+                source={require("./../assets/gradient-back.jpeg")}
+                style={styles.image}
+            >
+                <UserInfoscreen navigation={navigation} />
+                {loading ? (
+                    <ActivityIndicator
+                        style={{ height: 80 }}
+                        color="grey"
+                        size="large"
                     />
-                </SafeAreaView>
-            )}
+                ) : (
+                    <SafeAreaView>
+                        <ShowNotification />
+                        <Button
+                            title={"See my cart (" + cart.length + ")"}
+                            onPress={() => navigation.navigate("Cart")}
+                            color="black"
+                        ></Button>
+                        <SafeAreaView
+                            style={{
+                                backgroundColor: "#fff",
+                                alignItems: "center",
+                                justifyContent: "center",
+                            }}
+                        ></SafeAreaView>
+                        <Button
+                            title="Scroll to middle"
+                            onPress={() => {
+                                ref.scrollToIndex({
+                                    animated: true,
+                                    index: 5,
+                                    viewPosition: 0,
+                                });
+                            }}
+                            color="black"
+                        />
+
+                        <FlatList
+                            data={products.products.edges}
+                            ref={(ref) => {
+                                setRef(ref);
+                            }}
+                            ListEmptyComponent={handleEmpty}
+                            ListHeaderComponent={() => (
+                                <Text style={styles.title}>
+                                    Hi {userInfo?.firstName} 😊!
+                                </Text>
+                            )}
+                            stickyHeaderIndices={[0]}
+                            renderItem={renderItem}
+                            showsHorizontalScrollIndicator={false}
+                            numColumns={2}
+                            //ItemSeparatorComponent={Divider}
+                            contentContainerStyle={{ paddingBottom: 150 }}
+                            keyExtractor={(item) => item.node.id} // Extract keys for each item in the array
+                        />
+                    </SafeAreaView>
+                )}
+            </ImageBackground>
         </View>
     );
 };
