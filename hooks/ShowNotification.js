@@ -50,9 +50,9 @@ const ShowNotification = () => {
     };
 
     useEffect(() => {
-        setStatus("success");
         popIn();
         if (cart.length == 0) setStatus("fail");
+        else setStatus("success");
     });
 
     return (

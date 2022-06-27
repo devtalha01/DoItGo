@@ -13,8 +13,7 @@ import { AuthContext, AuthProvider } from "./context";
 const UserInfoscreen = ({ navigation }) => {
     const styleShared = require("./../../style");
     const [show, setShow] = useState(false);
-    const { login, userInfo, loading, logout, userInfos, exampleUsers } =
-        useContext(AuthContext);
+    const { userInfo, logout } = useContext(AuthContext);
     const hideLogin =
         typeof !userInfo?.firstName !== "undefined" && !userInfo?.firstName
             ? true

@@ -11,8 +11,8 @@ export const AuthProvider = ({ children }) => {
     const [message, setMessage] = useState("");
     const login = (email, password) => {
         setLoading(true);
-        //email = "atuny0@sohu.com";
-        //password = "9uQFF1Lh";
+        email = "atuny0@sohu.com";
+        password = "9uQFF1Lh";
         axios
             .get(`${BASE_URL}`, {
                 email,

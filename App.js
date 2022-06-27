@@ -5,8 +5,6 @@ import { createStackNavigator } from "@react-navigation/stack";
 import Homescreen from "./components/Homescreen";
 import Itemscreen from "./components/Itemscreen";
 import Productsscren from "./components/Productsscreen";
-import { CustoomDatascreen } from "./components/CustomDatascreen";
-import Axiosscreen from "./components/Axiosscreen";
 import Cartscreen from "./components/Cartscreen";
 import { AppContextProvider } from "./store/context";
 import { QueryClient, QueryClientProvider } from "react-query";

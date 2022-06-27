@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { AppContext } from "../store/context";
+import { Rating, AirbnbRating } from "react-native-elements";
 
 function Itemscreen({ route, navigation }) {
     // Get the dynamic item from the params.
@@ -42,7 +43,17 @@ function Itemscreen({ route, navigation }) {
                         style={styles.image}
                     />
                     <Text style={styles.text}>{item.node.name}</Text>
-                    <Text style={styles.text}>Price : $5</Text>
+                    <Text style={styles.text}>
+                        Price :{" "}
+                        {item.node.pricing.priceRange.start.gross.amount +
+                            ` ${item.node.pricing.priceRange.start.gross.currency}`}
+                    </Text>
+                    <Rating
+                        type="heart"
+                        ratingCount={3}
+                        imageSize={60}
+                        showRating
+                    />
                 </View>
                 <View style={styles.quantityContainer}>
                     <Text style={[styles.text, { marginLeft: 80 }]}>
@@ -77,6 +88,12 @@ function Itemscreen({ route, navigation }) {
                                           ? {
                                                 ...pd,
                                                 quantity: quantity,
+                                                price: item.node.pricing
+                                                    .priceRange.start.gross
+                                                    .amount,
+                                                currency:
+                                                    item.node.pricing.priceRange
+                                                        .start.gross.currency,
                                             }
                                           : pd
                                   )
@@ -87,6 +104,11 @@ function Itemscreen({ route, navigation }) {
                                       id: item.node.id,
                                       name: item.node.name,
                                       quantity: quantity,
+                                      price: item.node.pricing.priceRange.start
+                                          .gross.amount,
+                                      currency:
+                                          item.node.pricing.priceRange.start
+                                              .gross.currency,
                                   },
                               ]);
                         navigation.navigate("Cart");

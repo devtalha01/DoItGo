@@ -1,30 +1,17 @@
 import React, { createContext, useState, useEffect } from "react";
 import { useQuery } from "react-query";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { URL_PRODUCTS } from "../store/constants ";
+import { URL_PRODUCTS, GET_PRODUCTS } from "../store/constants ";
 const queryClient = new QueryClient();
 
 const AppContext = createContext();
-const GET_PRODUCTS = `
-      {
-        products(first: 40, channel: "default-channel") {
-            edges {
-                node {
-                    id
-                    name
-                    description
-                    thumbnail {
-                        url
-                    }
-                }
-            }
-        }
-    }
-`;
+
 const AppContextProvider = ({ children }) => {
     const [products, setProducts] = useState([]);
     const [cart, setCart] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [total, setTotal] = useState(0);
+    const array = [];
     //Loading products/cart with products items
     const { data, isLoading, error } = useQuery("products", () => {
         setLoading(true);
@@ -42,14 +29,25 @@ const AppContextProvider = ({ children }) => {
             })
             .then((response) => {
                 setLoading(false);
-                setProducts(response.data);
+                setProducts(response.data.products.edges);
             })
             .catch((err) => console.log(err));
     });
+
     //Remove product from list
     const removeItem = (id) => {
         setCart(cart.filter((item) => item.id !== id));
     };
+    //Total amount of products
+    const totalAmount = () => {
+        if (cart.length > 0)
+            return (
+                cart.reduce((a, b) => (a += b.price * b.quantity), 0) +
+                ` ${cart[0].currency}`
+            );
+        else return 0;
+    };
+
     return (
         <QueryClientProvider client={queryClient} contextSharing={true}>
             <AppContext.Provider
@@ -59,6 +57,7 @@ const AppContextProvider = ({ children }) => {
                     cart,
                     setCart,
                     removeItem,
+                    totalAmount,
                     loading,
                 }}
             >
