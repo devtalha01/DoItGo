@@ -13,11 +13,12 @@ import {
     ImageBackground,
     TextInput,
 } from "react-native";
-import { useQuery, gql } from "@apollo/client";
 import UserInfoscreen from "../components/Login/UserInfoscreen";
 import { AuthContext, AuthProvider } from "../components/Login/context";
 import ShowNotification from "./../hooks/ShowNotification";
 import { GET_PRODUCTS, URL_PRODUCTS } from "../store/constants ";
+import { Icon } from "react-native-elements";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 const handleEmpty = () => {
     return <Text>No data present!</Text>;
@@ -34,7 +35,7 @@ const Divider = () => {
     );
 };
 
-const Item = ({ item, title, onPress, navigation }) => (
+const Item = ({ item, title, onPress, navigation, isAvailable }) => (
     <View
         style={{
             flex: 1,
@@ -68,13 +69,15 @@ const Item = ({ item, title, onPress, navigation }) => (
             {item.node.pricing.priceRange.start.gross.amount +
                 ` ${item.node.pricing.priceRange.start.gross.currency}`}
         </Text>
+
+        {isAvailable && <Text>In stock</Text>}
         <Button title={title} onPress={onPress} color="black"></Button>
     </View>
 );
 
 const Productsscren = ({ navigation }) => {
-    const { products, setProducts, loading, cart, setCart } =
-        useContext(AppContext);
+    const { cart, setCart } = useContext(AppContext);
+    const [products, setProducts] = useState([]);
     const { userInfo } = useContext(AuthContext);
     const [ref, setRef] = useState(null);
     const goTo = () => navigation.navigate("Detail");
@@ -82,8 +85,11 @@ const Productsscren = ({ navigation }) => {
     const [selectedId, setSelectedId] = useState(null);
     const [search, setSearch] = useState("");
     const [masterDataSource, setMasterDataSource] = useState([]);
+    const [refresh, setRefresh] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+        setLoading(true);
         fetch(URL_PRODUCTS, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -97,8 +103,9 @@ const Productsscren = ({ navigation }) => {
                 }
             })
             .then((response) => {
-                setProducts(response.data.products.edges);
                 setMasterDataSource(response.data.products.edges);
+                filterByAsc(response.data.products.edges);
+                setLoading(false);
             })
             .catch((err) => console.log(err));
     }, []);
@@ -106,6 +113,7 @@ const Productsscren = ({ navigation }) => {
     const searchFilterFunction = (text) => {
         // Check if searched text is not blank
         if (text) {
+            console.log(masterDataSource.length);
             const newData = masterDataSource?.filter(function (item) {
                 // Applying filter for the inserted text in search bar
                 const itemData = item.node.name.trim().toLowerCase();
@@ -120,8 +128,30 @@ const Productsscren = ({ navigation }) => {
             setProducts(masterDataSource);
             setSearch(text);
         }
+        setRefresh((prev) => !prev);
     };
-
+    const filterByAsc = (data) => {
+        const dataAsc = data?.sort((a, b) => {
+            return a.node.pricing.priceRange.start.gross.amount >
+                b.node.pricing.priceRange.start.gross.amount
+                ? 1
+                : -1;
+        });
+        setProducts(dataAsc);
+        //setMasterDataSource(dataAsc);
+        setRefresh(false);
+    };
+    const filterByDesc = (data) => {
+        const dataDesc = data?.sort((a, b) => {
+            return a.node.pricing.priceRange.start.gross.amount <
+                b.node.pricing.priceRange.start.gross.amount
+                ? 1
+                : -1;
+        });
+        setProducts(dataDesc);
+        //setMasterDataSource(dataDesc);
+        setRefresh(true);
+    };
     const renderItem = ({ item }) => {
         return (
             <Item
@@ -151,6 +181,7 @@ const Productsscren = ({ navigation }) => {
                           ]);
                 }}
                 navigation={navigation}
+                isAvailable={item.node.isAvailable}
             />
         );
     };
@@ -163,11 +194,23 @@ const Productsscren = ({ navigation }) => {
             >
                 <UserInfoscreen navigation={navigation} />
                 {loading ? (
-                    <ActivityIndicator
-                        style={{ height: 80 }}
-                        color="grey"
-                        size="large"
-                    />
+                    <View style={{ backgroundColor: "#fff", height: 150 }}>
+                        <Text
+                            style={{
+                                fontSize: 16,
+                                paddingVertical: 40,
+                                paddingHorizontal: 32,
+                                textAlign: "center",
+                            }}
+                        >
+                            Please wait ! Loading products is in progress...
+                        </Text>
+                        <ActivityIndicator
+                            style={{ height: 80 }}
+                            color="grey"
+                            size="large"
+                        />
+                    </View>
                 ) : (
                     <SafeAreaView>
                         <ShowNotification />
@@ -194,15 +237,65 @@ const Productsscren = ({ navigation }) => {
                             }}
                             color="black"
                         />*/}
-                        <TextInput
-                            style={{ backgroundColor: "white", color: "red" }}
-                            placeholder="Search here by product name..."
-                            autoCapitalize="none"
-                            onChangeText={(text) => searchFilterFunction(text)}
-                            underlineColorAndroid="transparent"
-                            value={search}
-                        />
-
+                        <View
+                            style={[
+                                { flexDirection: "row", alignItems: "center" },
+                            ]}
+                        >
+                            <TextInput
+                                style={{
+                                    backgroundColor: "white",
+                                    color: "black",
+                                    width: 320,
+                                }}
+                                placeholder="Search here by product name..."
+                                autoCapitalize="none"
+                                onChangeText={(text) =>
+                                    searchFilterFunction(text)
+                                }
+                                underlineColorAndroid="transparent"
+                                value={search}
+                            />
+                            <Text
+                                style={{
+                                    color: "black",
+                                }}
+                            >
+                                Price
+                            </Text>
+                            <TouchableOpacity
+                                style={{
+                                    flexDirection: "row",
+                                    backgroundColor: "black",
+                                    marginLeft: 5,
+                                }}
+                                onPress={() => {
+                                    filterByAsc(products);
+                                }}
+                            >
+                                <FontAwesome
+                                    name="arrow-up"
+                                    size={20}
+                                    color="#fff"
+                                />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={{
+                                    flexDirection: "row",
+                                    backgroundColor: "black",
+                                    marginLeft: 5,
+                                }}
+                                onPress={() => {
+                                    filterByDesc(products);
+                                }}
+                            >
+                                <FontAwesome
+                                    name="arrow-down"
+                                    size={20}
+                                    color="#fff"
+                                />
+                            </TouchableOpacity>
+                        </View>
                         <FlatList
                             data={products}
                             ref={(ref) => {
@@ -218,6 +311,7 @@ const Productsscren = ({ navigation }) => {
                             renderItem={renderItem}
                             showsHorizontalScrollIndicator={false}
                             numColumns={2}
+                            extraData={refresh}
                             //ItemSeparatorComponent={Divider}
                             contentContainerStyle={{ paddingBottom: 260 }}
                             keyExtractor={(item) => item.node.id} // Extract keys for each item in the array

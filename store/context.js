@@ -10,8 +10,6 @@ const AppContextProvider = ({ children }) => {
     const [products, setProducts] = useState([]);
     const [cart, setCart] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [total, setTotal] = useState(0);
-    const array = [];
     //Loading products/cart with products items
     const { data, isLoading, error } = useQuery("products", () => {
         setLoading(true);

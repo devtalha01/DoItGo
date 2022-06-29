@@ -25,9 +25,10 @@ const Loginscreen = ({ navigation }) => {
         }).start();
     };
 
-    const [email, setEmail] = useState(null);
-    const [password, setPassword] = useState(null);
-    const { login, userInfo, loading, exampleUsers } = useContext(AuthContext);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const { login, userInfo, loading, exampleUsers, accountRegister } =
+        useContext(AuthContext);
     const hideLogin =
         typeof !userInfo?.firstName !== "undefined" && !userInfo?.firstName
             ? true
@@ -101,6 +102,16 @@ const Loginscreen = ({ navigation }) => {
                                     Use proposed accounts!
                                 </Text>
                             </TouchableOpacity>
+                            {/*  <TouchableOpacity
+                                onPress={() => {
+                                    accountRegister(email, password);
+                                }}
+                            >
+                                <Text style={styles.link}>
+                                    Register without email confirmation!
+                                </Text>
+                            </TouchableOpacity>
+                            */}
                         </View>
                     </View>
                 )}
