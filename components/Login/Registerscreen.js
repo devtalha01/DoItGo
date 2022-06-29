@@ -1,5 +1,12 @@
 import react, { useContext, useState } from "react";
-import { View, StyleSheet, Text, SafeAreaView, FlatList } from "react-native";
+import {
+    View,
+    StyleSheet,
+    Text,
+    SafeAreaView,
+    FlatList,
+    ActivityIndicator,
+} from "react-native";
 import { AuthContext, AuthProvider } from "./context";
 const emptyList = () => {
     return (
@@ -18,33 +25,45 @@ const itemSeparator = () => {
 };
 
 function Registerscreen({ navigation }) {
-    const { login, userInfo, loading, logout, userInfos, exampleUsers } =
-        useContext(AuthContext);
+    const { userInfos, loading } = useContext(AuthContext);
     const [copiedText, setCopiedText] = useState("");
 
     return (
         <SafeAreaView style={styles.container}>
+            {loading && (
+                <ActivityIndicator
+                    style={{ height: 80 }}
+                    color="grey"
+                    size="large"
+                />
+            )}
             <FlatList
                 data={userInfos}
                 renderItem={({ item }) => {
                     return (
-                        <View>
-                            <Text> Email : {item.email} </Text>
-                            <Text> Password : {item.password} </Text>
+                        <View
+                            style={[
+                                styles.container,
+                                { marginLeft: 10, marginTop: 10 },
+                            ]}
+                        >
+                            <Text>Email : {item.email}</Text>
+                            <Text>Password : {item.password}</Text>
                         </View>
                     );
                 }}
                 keyExtractor={(item) => item.id}
                 ItemSeparatorComponent={itemSeparator}
-                ListEmptyComponent={emptyList}
+                //ListEmptyComponent={emptyList}
                 ListHeaderComponent={() => (
                     <Text
                         style={{
-                            fontSize: 30,
+                            fontSize: 20,
                             textAlign: "center",
                             marginTop: 20,
                             fontWeight: "bold",
                             textDecorationLine: "underline",
+                            fontFamily: "serif",
                         }}
                     >
                         List of accounts
@@ -53,13 +72,13 @@ function Registerscreen({ navigation }) {
                 ListFooterComponent={() => (
                     <Text
                         style={{
-                            fontSize: 30,
+                            fontSize: 15,
                             textAlign: "center",
-                            marginBottom: 20,
                             fontWeight: "bold",
+                            fontFamily: "serif",
                         }}
                     >
-                        Thank You ;)
+                        Thank You 🥰!
                     </Text>
                 )}
             />

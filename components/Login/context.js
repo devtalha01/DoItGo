@@ -1,18 +1,26 @@
 import react, { createContext, useState } from "react";
 import axios from "axios";
-import { BASE_URL, URL_TOGET10 } from "../../store/constants ";
+import {
+    BASE_URL,
+    URL_TOGET10,
+    ACCOUNT_REGISTER,
+} from "../../store/constants ";
+import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 
 export const AuthContext = createContext();
-
+const client = new ApolloClient({
+    uri: "https://demo.saleor.io/graphql/",
+    cache: new InMemoryCache(),
+});
 export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(false);
     const [userInfo, setUserInfo] = useState("");
     const [userInfos, setUserInfos] = useState([]);
-    const [message, setMessage] = useState("");
+
     const login = (email, password) => {
         setLoading(true);
-        //email = "atuny0@sohu.com";
-        //password = "9uQFF1Lh";
+        email = "atuny0@sohu.com";
+        password = "9uQFF1Lh";
         axios
             .get(`${BASE_URL}`, {
                 email,
@@ -50,18 +58,39 @@ export const AuthProvider = ({ children }) => {
                 setLoading(false);
             });
     };
+    const accountRegister = (email, password) => {
+        // executing mutations
+        client
+            .mutate({
+                mutation: ACCOUNT_REGISTER,
+                variables: { email: email, password: password },
+            })
+            .then((response) => {
+                var accountErrors = response.data.accountRegister.accountErrors;
+                accountErrors?.flatMap((o) =>
+                    console.log(`The field ${o.field} is ${o.code}`)
+                );
+                var users = response.data.accountRegister.user;
+                console.log(`Hello ${users.firstName} ${users.lastName}!`);
+            })
+            .catch((err) => console.log(err));
+    };
+
     return (
-        <AuthContext.Provider
-            value={{
-                login,
-                userInfo,
-                loading,
-                logout,
-                userInfos,
-                exampleUsers,
-            }}
-        >
-            {children}
-        </AuthContext.Provider>
+        <ApolloProvider client={client}>
+            <AuthContext.Provider
+                value={{
+                    login,
+                    userInfo,
+                    loading,
+                    logout,
+                    userInfos,
+                    exampleUsers,
+                    accountRegister,
+                }}
+            >
+                {children}
+            </AuthContext.Provider>
+        </ApolloProvider>
     );
 };

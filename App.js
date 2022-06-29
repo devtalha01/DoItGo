@@ -1,12 +1,10 @@
 import * as React from "react";
-import { Animated } from "react-native";
+import { Animated, ImageBackground, StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import Homescreen from "./components/Homescreen";
 import Itemscreen from "./components/Itemscreen";
 import Productsscren from "./components/Productsscreen";
-import { CustoomDatascreen } from "./components/CustomDatascreen";
-import Axiosscreen from "./components/Axiosscreen";
 import Cartscreen from "./components/Cartscreen";
 import { AppContextProvider } from "./store/context";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -58,7 +56,11 @@ function MyStack() {
                             component={Productsscren}
                         />
                         <Stack.Screen name="Cart" component={Cartscreen} />
-                        <Stack.Screen name="Login" component={Loginscreen} />
+                        <Stack.Screen
+                            name="Login"
+                            options={{ headerShown: false }}
+                            component={Loginscreen}
+                        />
                         <Stack.Screen
                             name="Register"
                             component={Registerscreen}
@@ -74,6 +76,14 @@ function MyStack() {
         </QueryClientProvider>
     );
 }
+
+const styles = StyleSheet.create({
+    image: {
+        flex: 1,
+        width: "100%",
+        alignItems: "center",
+    },
+});
 
 export default function App() {
     return (
