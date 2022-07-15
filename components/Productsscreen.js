@@ -17,7 +17,6 @@ import UserInfoscreen from "../components/Login/UserInfoscreen";
 import { AuthContext, AuthProvider } from "../components/Login/context";
 import ShowNotification from "./../hooks/ShowNotification";
 import { GET_PRODUCTS, URL_PRODUCTS } from "../store/constants ";
-import { Icon } from "react-native-elements";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 const handleEmpty = () => {
@@ -113,7 +112,6 @@ const Productsscren = ({ navigation }) => {
     const searchFilterFunction = (text) => {
         // Check if searched text is not blank
         if (text) {
-            console.log(masterDataSource.length);
             const newData = masterDataSource?.filter(function (item) {
                 // Applying filter for the inserted text in search bar
                 const itemData = item.node.name.trim().toLowerCase();
@@ -138,7 +136,6 @@ const Productsscren = ({ navigation }) => {
                 : -1;
         });
         setProducts(dataAsc);
-        //setMasterDataSource(dataAsc);
         setRefresh(false);
     };
     const filterByDesc = (data) => {
@@ -149,7 +146,6 @@ const Productsscren = ({ navigation }) => {
                 : -1;
         });
         setProducts(dataDesc);
-        //setMasterDataSource(dataDesc);
         setRefresh(true);
     };
     const renderItem = ({ item }) => {
@@ -214,11 +210,28 @@ const Productsscren = ({ navigation }) => {
                 ) : (
                     <SafeAreaView>
                         <ShowNotification />
-                        <Button
-                            title={"See my cart (" + cart.length + ")"}
-                            onPress={() => navigation.navigate("Cart")}
-                            color="black"
-                        ></Button>
+                        <Text style={{ backgroundColor: "#fff" }}>
+                            Hi {userInfo?.firstName} 😊 !
+                        </Text>
+                        <TouchableOpacity
+                            style={{
+                                flexDirection: "row",
+                                position: "absolute",
+                                right: 0,
+                            }}
+                            onPress={() => {
+                                navigation.navigate("Cart");
+                            }}
+                        >
+                            <FontAwesome
+                                name="shopping-cart"
+                                color="black"
+                                size={30}
+                            />
+                            <Text style={{ color: "black" }}>
+                                ({cart.length})
+                            </Text>
+                        </TouchableOpacity>
                         <SafeAreaView
                             style={{
                                 backgroundColor: "#fff",
@@ -239,7 +252,11 @@ const Productsscren = ({ navigation }) => {
                         />*/}
                         <View
                             style={[
-                                { flexDirection: "row", alignItems: "center" },
+                                {
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    backgroundColor: "#fff",
+                                },
                             ]}
                         >
                             <TextInput
@@ -303,8 +320,13 @@ const Productsscren = ({ navigation }) => {
                             }}
                             ListEmptyComponent={handleEmpty}
                             ListHeaderComponent={() => (
-                                <Text style={styles.title}>
-                                    Hi {userInfo?.firstName} 😊!
+                                <Text
+                                    style={{
+                                        backgroundColor: "#fff",
+                                        height: 30,
+                                    }}
+                                >
+                                    {/*Hi {userInfo?.firstName} 😊!*/}
                                 </Text>
                             )}
                             stickyHeaderIndices={[0]}

@@ -12,6 +12,11 @@ import Loginscreen from "./components/Login/Loginscreen";
 import Registerscreen from "./components/Login/Registerscreen";
 import { AuthContext, AuthProvider } from "./components/Login/context";
 import UserInfoscreen from "./components/Login/UserInfoscreen";
+import Commentsscreen from "./components/Commentsscreen";
+import "./components/Warnings/ignoreWarnings";
+import Complaintscreen from "./components/Complaintscreen";
+import Menu from "./components/Navigate/Menu";
+
 const forFade = ({ current, next }) => {
     const opacity = Animated.add(
         current.progress,
@@ -33,9 +38,6 @@ const Stack = createStackNavigator();
 const queryClient = new QueryClient();
 
 function MyStack() {
-    const Navigation = () => {
-        const { userInfo } = useContext(AuthContext);
-    };
     return (
         <QueryClientProvider client={queryClient}>
             <AppContextProvider>
@@ -70,6 +72,14 @@ function MyStack() {
                             initialParams={{ otherParam: "App" }}
                             component={UserInfoscreen}
                         />
+                        <Stack.Screen
+                            name="Feedbacks"
+                            component={Commentsscreen}
+                        />
+                        <Stack.Screen
+                            name="Complaint"
+                            component={Complaintscreen}
+                        />
                     </Stack.Navigator>
                 </AuthProvider>
             </AppContextProvider>
@@ -87,8 +97,16 @@ const styles = StyleSheet.create({
 
 export default function App() {
     return (
+        /*
         <NavigationContainer>
             <MyStack />
-        </NavigationContainer>
+        </NavigationContainer>*/
+        <QueryClientProvider client={queryClient}>
+            <AppContextProvider>
+                <AuthProvider>
+                    <Menu />
+                </AuthProvider>
+            </AppContextProvider>
+        </QueryClientProvider>
     );
 }

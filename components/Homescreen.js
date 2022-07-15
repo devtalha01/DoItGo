@@ -6,8 +6,7 @@ import { AuthContext, AuthProvider } from "../components/Login/context";
 const queryClient = new QueryClient();
 
 function Homescreen({ navigation }) {
-    const { login, userInfo, loading, logout, userInfos, exampleUsers } =
-        useContext(AuthContext);
+    const { userInfo } = useContext(AuthContext);
     const hideLogin =
         typeof !userInfo?.firstName !== "undefined" && !userInfo?.firstName
             ? true

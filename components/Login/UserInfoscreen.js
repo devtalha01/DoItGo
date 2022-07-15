@@ -32,9 +32,14 @@ const UserInfoscreen = ({ navigation }) => {
                         }}
                     />
                     <Text>Hi {userInfo?.firstName} 😃 !</Text>
-                    <View style={[styles.container, { marginVertical: 15 }]}>
+                    <View
+                        style={[
+                            styles.container,
+                            { marginVertical: 15, alignContent: "center" },
+                        ]}
+                    >
                         <TouchableOpacity
-                            style={styleShared.buttonLogout}
+                            style={[styleShared.buttonLogout, { width: 120 }]}
                             onPress={() => {
                                 logout();
                                 navigation.navigate("Login");
@@ -44,7 +49,7 @@ const UserInfoscreen = ({ navigation }) => {
                                 Logout
                             </Text>
                         </TouchableOpacity>
-                        <Animated.View>
+                        {/* <Animated.View>
                             <TouchableOpacity
                                 style={styleShared.buttonInfo}
                                 onPress={() => {
@@ -56,8 +61,33 @@ const UserInfoscreen = ({ navigation }) => {
                                     Show products
                                 </Text>
                             </TouchableOpacity>
-                        </Animated.View>
+                            </Animated.View>*/}
                     </View>
+                    {/* <View style={[styles.container, { marginVertical: 15 }]}>
+                        <TouchableOpacity
+                            style={[styleShared.buttonInfo, { width: 200 }]}
+                            onPress={() => {
+                                navigation.navigate("Feedbacks");
+                            }}
+                        >
+                            <Text style={styleShared.buttonAltTextInfo}>
+                                Customer feedback
+                            </Text>
+                        </TouchableOpacity>
+                        {/* <TouchableOpacity
+                            style={[
+                                styleShared.buttonInfo,
+                                { width: 100, marginLeft: 5 },
+                            ]}
+                            onPress={() => {
+                                navigation.navigate("Complaint");
+                            }}
+                        >
+                            <Text style={styleShared.buttonAltTextInfo}>
+                                Complaint
+                            </Text>
+                        </TouchableOpacity>
+                    </View>*/}
                 </View>
             )}
         </View>

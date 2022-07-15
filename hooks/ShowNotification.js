@@ -18,7 +18,7 @@ const ShowNotification = () => {
     const { cart } = useContext(AppContext);
     const successColor = "#6dcf81";
     const successHeader = "Success!";
-    const successMessage = `You have ${cart.length} product(s) 😉!`;
+    const successMessage = `You have ${cart.length} product(s) 😉! \n Click on the shopping cart icon!`;
     const failColor = "black"; //"#bf6060";
     const failHeader = "Notification";
     const failMessage = `You have ${cart.length} product(s) 🙄!`;
